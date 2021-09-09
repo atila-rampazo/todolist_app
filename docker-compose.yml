@@ -1,0 +1,42 @@
+version: "3"
+services:
+  api-todolist:
+    build:
+      dockerfile: ./api/Dockerfile
+      context: .
+    container_name: api-todolist
+    ports:
+      - 8002:9000
+    volumes:
+      - ./application:/var/www/html
+    networks:
+      - todolist-network
+
+  application-todolist:
+    build:
+      dockerfile: ./application/Dockerfile
+      context: .
+    container_name: application-todolist
+    ports:
+      - 8001:3000
+    volumes:
+      - ./application:/usr/src/app
+    networks:
+      - todolist-network
+
+  nginx-todolist:
+    container_name: nginx-todolist
+    image: nginx:1.17.8
+    ports:
+      - 80:80
+    volumes:
+      - ./server/conf:/etc/nginx/conf.d
+      - /etc/hosts:/etc/hosts
+    networks:
+      - todolist-network
+    depends_on:
+      - application-todolist
+      - api-todolist
+networks:
+  todolist-network:
+    driver: bridge
