@@ -6,9 +6,9 @@ services:
       context: .
     container_name: api-todolist
     ports:
-      - 8002:9000
+      - 8002:8002
     volumes:
-      - ./application:/var/www/html
+      - ./api:/app
     networks:
       - todolist-network
 
@@ -32,6 +32,8 @@ services:
     volumes:
       - ./server/conf:/etc/nginx/conf.d
       - /etc/hosts:/etc/hosts
+    links:
+      - api-todolist
     networks:
       - todolist-network
     depends_on:

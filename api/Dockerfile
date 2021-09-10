@@ -1,21 +1,12 @@
-FROM php:7.4-fpm-alpine
+FROM php:8.0.5
+RUN apt-get update -y && apt-get install -y openssl zip unzip git
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN docker-php-ext-install pdo
+WORKDIR /app
+COPY ./composer*.json ./
+COPY . ./
+RUN composer install
 
-RUN apk update --no-cache \
-    && apk add \
-    icu-dev \
-    oniguruma-dev \
-    tzdata
+CMD php artisan serve --host=0.0.0.0 --port=8002
 
-RUN docker-php-ext-install intl
-
-RUN docker-php-ext-install pcntl
-
-RUN docker-php-ext-install pdo_mysql
-
-RUN docker-php-ext-install mbstring
-
-RUN rm -rf /var/cache/apk/*
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
-
-EXPOSE 9000
+EXPOSE 8002
