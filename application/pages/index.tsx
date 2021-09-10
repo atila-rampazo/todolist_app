@@ -1,8 +1,23 @@
+import React, { useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  useEffect(() => {
+    loadData();
+  }, []);
+  const loadData = async () => {
+    const response = await fetch("http://api.todolist.local/api", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+  };
   return (
     <div className={styles.container}>
       <Head>
