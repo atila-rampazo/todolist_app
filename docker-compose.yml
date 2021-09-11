@@ -1,14 +1,12 @@
 version: "3"
 services:
   api-todolist:
-    build:
-      dockerfile: ./api/Dockerfile
-      context: .
+    image: atilarampazo/php
     container_name: api-todolist
     ports:
       - 8002:8002
     volumes:
-      - ./api:/app
+      - "./api:/app"
     networks:
       - todolist-network
     depends_on:
