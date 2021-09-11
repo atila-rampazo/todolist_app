@@ -11,6 +11,9 @@ services:
       - ./api:/app
     networks:
       - todolist-network
+    depends_on:
+      - db-todolist
+    restart: unless-stopped
 
   application-todolist:
     build:
@@ -23,6 +26,35 @@ services:
       - ./application:/usr/src/app
     networks:
       - todolist-network
+    restart: unless-stopped
+
+  db-todolist:
+    image: postgres
+    container_name: db-todolist
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "pgsql:/var/lib/postgresql/data"
+    networks:
+      - todolist-network
+    restart: unless-stopped
+
+  pg-admin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_USER}"
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD}"
+    ports:
+      - "16543:80"
+    networks:
+      - todolist-network
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db-todolist
+    restart: unless-stopped
 
   nginx-todolist:
     container_name: nginx-todolist
@@ -39,6 +71,14 @@ services:
     depends_on:
       - application-todolist
       - api-todolist
+    restart: unless-stopped
+
 networks:
   todolist-network:
     driver: bridge
+
+volumes:
+  pgsql:
+    driver: local
+  pgadmin:
+    driver: local
