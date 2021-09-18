@@ -18,6 +18,7 @@ services:
       dockerfile: ./application/Dockerfile
       context: .
     container_name: application-todolist
+
     ports:
       - 8001:3000
     volumes:
