@@ -12,6 +12,10 @@ services:
     depends_on:
       - db-todolist
     restart: unless-stopped
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
 
   application-todolist:
     build:
@@ -26,6 +30,10 @@ services:
     networks:
       - todolist-network
     restart: unless-stopped
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
 
   db-todolist:
     image: postgres
@@ -39,7 +47,9 @@ services:
     networks:
       - todolist-network
     restart: unless-stopped
-
+    deploy:
+      placement:
+        constraints: [node.role === manager]
   pg-admin:
     image: dpage/pgadmin4
     environment:
@@ -54,7 +64,9 @@ services:
     depends_on:
       - db-todolist
     restart: unless-stopped
-
+    deploy:
+      placement:
+        constraints: [node.role === manager]
   nginx-todolist:
     container_name: nginx-todolist
     image: nginx:1.17.8
@@ -71,7 +83,10 @@ services:
       - application-todolist
       - api-todolist
     restart: unless-stopped
-
+    deploy:
+      placement:
+        constraints: [node.role === manager]
+        
 networks:
   todolist-network:
     driver: bridge
